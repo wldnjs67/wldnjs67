@@ -10,7 +10,7 @@ int main(int argc, char *argv[]) {
 	printf("enter an integer : ");
 	scanf("%d", &input_int);
 	
-	printf("enter an float : ");
+	printf("enter a float : ");
 	scanf("%f", &input_float);
 	
 	printf("integer : %d, float : %f\n", input_int, input_float);
