@@ -4,8 +4,6 @@
 //
 
 #include <stdio.h>
-// ----- EX. 1 : Preparation------------
-// Standard libraries for random number generation and time handling
 #include <stdlib.h>
 #include <time.h> 
 #include "board.h"
@@ -14,12 +12,12 @@
 // Number of players in the game
 #define N_PLAYER            3
 // ----- EX. 4 : player ------------
-
-#define MAX_CHARNAME        200 // Maximum length for player names
+// Maximum length for player names
+#define MAX_CHARNAME        200
 
 // ----- EX. 3 : board ------------
-// Maximum value on the dice
-#define MAX_DIE             6 // dice range (1~6)
+// dice range (1~6)
+#define MAX_DIE             6
 
 // ----- EX. 4 : player ------------
 // Player status definitions: 0 for live, 1 for die, 2 for end
@@ -99,7 +97,7 @@ void checkDie(void)
     {
         if (player_status[i] == PLAYERSTATUS_LIVE && board_getBoardStatus(player_position[i]) == BOARDSTATUS_NOK)
         {
-            printf("%s at Pos %i has been eaten by the shark! (Coins: %i)\n", player_name[i], player_position[i], player_coin[i]);
+           printf("%s in pos %i has died!! (coin %i)\n", player_name[i], player_position[i], player_coin[i]);
             player_status[i] = PLAYERSTATUS_DIE;
         }
     }
@@ -193,9 +191,10 @@ int main() {
         // Skip turn for dead or ended players
         if (player_status[turn] != PLAYERSTATUS_LIVE)
         {
-            turn = (turn + 1)%N_PLAYER; // Move to the next player
+            turn = (turn + 1) % N_PLAYER;
             continue;
         }
+
         // ----- EX. 4 : player ------------
 
         // Step 2-1: Print the status of the board and players
@@ -215,24 +214,24 @@ int main() {
         // ----- EX. 4 : player ------------
         dieResult = rolldie(); // Roll the dice
 
-        // Step 2-3: Move the player (implementation pending)
-        printf("%s rolled a %d!\n", player_name[turn], dieResult);
+        // Step 2-3: Move the player
+        printf("Dice result: %d, %s moved to %d!\n", dieResult, player_name[turn], player_position[turn] + dieResult);
 
-
+        // Move player
         player_position[turn] += dieResult;
         if (player_position[turn] >= N_BOARD)
         {
-            player_position[turn] = N_BOARD - 1; // Stop at the last position
-            player_status[turn] = PLAYERSTATUS_END;
-            printf("%s has reached the end of the board!\n", player_name[turn]);
-        }
+	      player_position[turn] = N_BOARD - 1; // Stop at the last position
+          player_status[turn] = PLAYERSTATUS_END;
+          printf("%s has reached the end of the board!\n", player_name[turn]);
+		  }
 
         // Collect coins
         int coin = board_getBoardCoin(player_position[turn]);
         if (coin > 0)
         {
             player_coin[turn] += coin;
-            printf("%s collected %d coin(s)!\n", player_name[turn], coin);
+            printf("-> Lucky! %s got %d coins!\n", player_name[turn], coin);
         }
 
         // Check if any player dies
@@ -241,18 +240,17 @@ int main() {
         // Shark moves after all players take a turn
         if (turn == N_PLAYER - 1)
         {
-            printf("The shark is moving...\n");
-            board_stepShark();
+            printf("Shark moved to %d\n", board_stepShark());
         }
 
         turn = (turn + 1) % N_PLAYER;
     } while (!game_end());
 
-    printf("GAME OVER!\n");
+    printf("GAME END!!\n");
     int winner = getWinner();
     if (winner != -1)
     {
-        printf("%d players survived. The winner is %s with %d coins!\n", getAlivePlayer(), player_name[winner], player_coin[winner]);
+        printf("%d players are alive! Winner is %s\n", getAlivePlayer(), player_name[winner]);
     }
     else
     {
@@ -261,4 +259,5 @@ int main() {
 
     return 0;
 }
+
 

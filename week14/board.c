@@ -66,9 +66,14 @@ int board_initBoard(void) //board initialization
 // ----- EX. 5 : shark ------------
 int board_stepShark(void)
 {
+	int i;
     int step = 1 + (rand() % MAX_SHARKSTEP); // Random step size (1~6)
-    shark_position = (shark_position + step) % N_BOARD; // Update shark position
-    return shark_position;
+    for (i=0;i<step;i++)
+    {
+      shark_position = (shark_position + 1) % N_BOARD; // Move shark one step
+      board_status[shark_position] = BOARDSTATUS_NOK;  // Mark position as destroyed
+    }
+	return shark_position;
 }
 
 // ----- EX. 5 : shark ------------
