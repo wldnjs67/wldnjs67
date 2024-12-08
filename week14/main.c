@@ -8,18 +8,16 @@
 #include <time.h> 
 #include "board.h"
 
-// ----- EX. 4 : player ------------
+
 // Number of players in the game
 #define N_PLAYER            3
-// ----- EX. 4 : player ------------
+
 // Maximum length for player names
 #define MAX_CHARNAME        200
 
-// ----- EX. 3 : board ------------
 // dice range (1~6)
 #define MAX_DIE             6
 
-// ----- EX. 4 : player ------------
 // Player status definitions: 0 for live, 1 for die, 2 for end
 #define PLAYERSTATUS_LIVE   0 
 #define PLAYERSTATUS_DIE    1 
@@ -31,17 +29,13 @@ char player_name[N_PLAYER][MAX_CHARNAME];
 int player_coin[N_PLAYER];
 int player_status[N_PLAYER];
 char player_statusString[3][MAX_CHARNAME] = {"LIVE", "DIE", "END"};
-// ----- EX. 4 : player ------------
 
-// ----- EX. 3 : board ------------
 // Function to roll a dice, returning a random value between 1 and MAX_DIE
 int rolldie(void)
 {
     return rand()%MAX_DIE+1;
 }
-// ----- EX. 3 : board ------------
 
-// ----- EX. 1 : Preparation------------
 // Function to display the game opening banner
 void opening(void)
 {
@@ -51,9 +45,7 @@ void opening(void)
     printf("==============================================================\n");
     printf("==============================================================\n");
 }
-// ----- EX. 1 : Preparation------------
 
-// ----- EX. 4 : player ------------
 // Function to display the player's position on the board
 void printPlayerPosition(int player)
 {
@@ -66,7 +58,7 @@ void printPlayerPosition(int player)
         else
         {
             if (board_getBoardStatus(i) == BOARDSTATUS_NOK) // Check board status
-                printf("X"); // Mark as unsafe position
+                printf("X"); // Mark as unsafe position (the place where sharks passed by)
             else
                 printf(" "); // Empty space
         }
@@ -86,9 +78,7 @@ void printPlayerStatus(void)
     }
     printf("-----------------\n");
 }
-// ----- EX. 4 : player ------------
 
-// ----- EX. 5 : shark ------------
 // Function to check if any player is in a dangerous position and mark them as dead
 void checkDie(void)
 {   
@@ -102,10 +92,8 @@ void checkDie(void)
         }
     }
 }
-// ----- EX. 5 : shark ------------
 
-// ----- EX. 6 : game end ------------
-// function 1
+// Function to end this game
 int game_end(void)
 {
 	int i;
@@ -122,7 +110,7 @@ int game_end(void)
 	}
 	return flag_end;
 }
-// function 2 - count of alive player
+// Function to know alive player 
 int getAlivePlayer(void)
 {
 	int cnt=0;
@@ -134,7 +122,7 @@ int getAlivePlayer(void)
 	}
 	return cnt;
 }
-// function 3 - who is winner?
+// Function to know who is winner
 int getWinner(void)
 {
 	int winner=-1;
@@ -151,25 +139,21 @@ int getWinner(void)
 	}
 	return winner;
 }
-// ----- EX. 6 : game end ------------
 
+//main flow of this game
 int main() {
     
     int i;
     int turn=0;
 
-    // ----- EX. 1 : Preparation------------
+
     srand((unsigned)time(NULL)); // Initialize random seed
     opening(); // Display the game banner
-    // ----- EX. 1 : Preparation------------
 
-    // ----- EX. 2 : structuring ------------
     // Step 1: Initialization
-    
     // Step 1-1: Initialize the board
     board_initBoard();
 
-    // ----- EX. 4 : player ------------
     // Step 1-2: Initialize players
     for (i=0;i<N_PLAYER;i++)
     {
@@ -179,15 +163,13 @@ int main() {
         printf("Player %i's name: ", i+1); // Prompt for player name
         scanf("%s", player_name[i]);
     }
-    // ----- EX. 4 : player ------------
-
+  
     // Step 2: Game start, turn loop
     do {
         int dieResult; // Result of the dice roll
         int coinResult; // Coin result placeholder
         int dum; // Placeholder for input
 
-        // ----- EX. 4 : player ------------
         // Skip turn for dead or ended players
         if (player_status[turn] != PLAYERSTATUS_LIVE)
         {
@@ -195,23 +177,18 @@ int main() {
             continue;
         }
 
-        // ----- EX. 4 : player ------------
-
         // Step 2-1: Print the status of the board and players
-        // ----- EX. 3 : board ------------
+    
         board_printBoardStatus();
-        // ----- EX. 3 : board ------------
-        // ----- EX. 4 : player ------------
         printPlayerStatus();
-        // ----- EX. 4 : player ------------
 
         // Step 2-2: Roll the dice
-        // ----- EX. 4 : player ------------
+
         printf("%s's turn!! ", player_name[turn]);
         printf("Press any key to roll a dice!\n");
         scanf("%d", &dum); // Wait for user input
         fflush(stdin);
-        // ----- EX. 4 : player ------------
+
         dieResult = rolldie(); // Roll the dice
 
         // Step 2-3: Move the player
@@ -221,7 +198,7 @@ int main() {
         player_position[turn] += dieResult;
         if (player_position[turn] >= N_BOARD)
         {
-	      player_position[turn] = N_BOARD - 1; // Stop at the last position
+	      player_position[turn] = N_BOARD - 1; //stop in the last compartment
           player_status[turn] = PLAYERSTATUS_END;
           printf("%s has reached the end of the board!\n", player_name[turn]);
 		  }
@@ -244,17 +221,17 @@ int main() {
         }
 
         turn = (turn + 1) % N_PLAYER;
-    } while (!game_end());
+    } while (!game_end()); //do-while 
 
     printf("GAME END!!\n");
     int winner = getWinner();
     if (winner != -1)
     {
-        printf("%d players are alive! Winner is %s\n", getAlivePlayer(), player_name[winner]);
+        printf("%d players are alive! Winner is %s\n", getAlivePlayer(), player_name[winner]); //outputs for the number of players who survived and the winners.
     }
     else
     {
-        printf("No winner. All players are dead.\n");
+        printf("No winner. All players are dead.\n"); //
     }
 
     return 0;
